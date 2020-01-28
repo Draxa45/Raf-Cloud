@@ -160,22 +160,22 @@ public class MachineServiceImpl implements MachineService {
             return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCase(user,name);
         if(status!= null)
         {
-            if(from == null && too != null)
+            if(from != null && too != null)
                 return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndStateAndDataCreatedIsBetween(user,name,State.valueOf(status),from,too);
             if(from != null && too == null)
                 return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndStateAndDataCreatedIsAfter(user,name,State.valueOf(status),from);
-            if(from != null && too != null)
+            if(from == null && too != null)
                 return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndStateAndDataCreatedIsBefore(user,name,State.valueOf(status),too);
             if(from == null && too == null)
                 return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndState(user,name,State.valueOf(status));
         }
         else
         {
-            if(from == null && too != null)
+            if(from != null && too != null)
                 return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndDataCreatedIsBetween(user,name,from,too);
             if(from != null && too == null)
                 return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndDataCreatedIsAfter(user,name,from);
-            if(from != null && too != null)
+            if(from == null && too != null)
                 return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndDataCreatedIsBefore(user,name,too);
         }
 

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import raf.rs.cloud.model.CreateRequest;
 import raf.rs.cloud.model.Machine;
+import raf.rs.cloud.model.SearchResponse;
 import raf.rs.cloud.service.MachineService;
 
 
@@ -32,7 +33,8 @@ public class MachineApi {
 
     public Machine create (@RequestBody CreateRequest req)
     {
-
+        System.out.println(req.getId());
+        System.out.println(req.getName());
         return service.create(req.getId(),req.getName());
     }
     @GetMapping("/start")
@@ -122,11 +124,26 @@ public class MachineApi {
         }
 
     }
-    @PostMapping("/search")
+    @GetMapping("/search")
     public @ResponseBody
-    List<Machine> search(@RequestParam(required = false) String name , @RequestParam long  userId, @RequestParam(required = false) String  state, @RequestParam(required = false)@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from , @RequestParam(required = false)@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate too)
+    SearchResponse search(@RequestParam(required = false) String name , @RequestParam long  userId, @RequestParam(required = false) String  state, @RequestParam(required = false) String from , @RequestParam(required = false)String too)
     {
-        return service.search(name,state,from,too,userId);
+        LocalDate fromDate = null;
+        LocalDate tooDate = null;
+        System.out.println(from);
+        if(from!= null)
+        {
+            fromDate = LocalDate.parse(from);
+            System.out.println("FROM:" + fromDate.toString());
+        }
+        if(too!= null)
+        {
+            tooDate = LocalDate.parse(too);
+            System.out.println("TOO: " + tooDate.toString());
+        }
+
+
+        return new SearchResponse(service.search(name,state,fromDate,tooDate,userId));
     }
 
 
