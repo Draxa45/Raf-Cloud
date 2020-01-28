@@ -2,8 +2,11 @@ package raf.rs.cloud.model;
 
 import lombok.Data;
 import org.hibernate.annotations.Type;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 @Entity
 @Data
@@ -28,15 +31,25 @@ public class Machine {
     @Type(type="yes_no")
     private Boolean active;
 
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "date_created")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dataCreated;
+
+
     public  Machine(){
 
     }
 
-    public Machine(User user) {
+    public Machine(User user, String name) {
+        this.name = name;
         this.createdBy = user;
         this.uid = UUID.randomUUID().toString();
         this.state = State.STOPPED;
         this.active = true;
+        this.dataCreated = LocalDate.now();
     }
 
     public long getId() {

@@ -10,7 +10,10 @@ import raf.rs.cloud.model.User;
 import raf.rs.cloud.service.MachineService;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -34,10 +37,10 @@ public class MachineServiceImpl implements MachineService {
     }
 
     @Override
-    public Machine create(long userId) {
+    public Machine create(long userId, String name) {
 
         User user = userDao.getById(userId);
-        return mecDao.save(new Machine(user));
+        return mecDao.save(new Machine(user,name));
     }
 
     @Override
@@ -97,8 +100,6 @@ public class MachineServiceImpl implements MachineService {
 
         return 2;
     }
-
-
     @Override
     public int stop(Long id) {
 
@@ -148,6 +149,41 @@ public class MachineServiceImpl implements MachineService {
         }
         return 2;
     }
+
+    @Override
+    public List<Machine> search(String name, String status, LocalDate from, LocalDate too , Long id) {
+
+        if (name == null)
+            name = "";
+        User user = userDao.getById(id);
+        if (from == null && too == null & status == null)
+            return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCase(user,name);
+        if(status!= null)
+        {
+            if(from == null && too != null)
+                return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndStateAndDataCreatedIsBetween(user,name,State.valueOf(status),from,too);
+            if(from != null && too == null)
+                return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndStateAndDataCreatedIsAfter(user,name,State.valueOf(status),from);
+            if(from != null && too != null)
+                return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndStateAndDataCreatedIsBefore(user,name,State.valueOf(status),too);
+            if(from == null && too == null)
+                return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndState(user,name,State.valueOf(status));
+        }
+        else
+        {
+            if(from == null && too != null)
+                return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndDataCreatedIsBetween(user,name,from,too);
+            if(from != null && too == null)
+                return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndDataCreatedIsAfter(user,name,from);
+            if(from != null && too != null)
+                return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCaseAndDataCreatedIsBefore(user,name,too);
+        }
+
+
+        return mecDao.getMachinesByCreatedByAndActiveIsTrueAndNameContainingIgnoreCase(user,name);
+
+    }
+
 
 
 }

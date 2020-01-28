@@ -2,16 +2,23 @@ package raf.rs.cloud.api;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import raf.rs.cloud.model.CreateRequest;
 import raf.rs.cloud.model.Machine;
 import raf.rs.cloud.service.MachineService;
 
+
+import java.time.LocalDate;
+
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/machine")
+@CrossOrigin
 public class MachineApi {
 
     private MachineService service;
@@ -22,9 +29,11 @@ public class MachineApi {
     }
 
     @PostMapping("/create")
-    public Machine create (@RequestParam long id)
+
+    public Machine create (@RequestBody CreateRequest req)
     {
-        return service.create(id);
+
+        return service.create(req.getId(),req.getName());
     }
     @GetMapping("/start")
     public @ResponseBody
@@ -93,7 +102,7 @@ public class MachineApi {
     }
     @GetMapping("/destroy")
     public @ResponseBody
-    ResponseEntity<?> destroy (@RequestParam Long id) throws ExecutionException, InterruptedException{
+    ResponseEntity<?> destroy (@RequestParam Long id ) throws ExecutionException, InterruptedException{
 
         int flag = service.destroy(id);
 
@@ -112,6 +121,12 @@ public class MachineApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Operation currently not possible");
         }
 
+    }
+    @PostMapping("/search")
+    public @ResponseBody
+    List<Machine> search(@RequestParam(required = false) String name , @RequestParam long  userId, @RequestParam(required = false) String  state, @RequestParam(required = false)@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from , @RequestParam(required = false)@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate too)
+    {
+        return service.search(name,state,from,too,userId);
     }
 
 

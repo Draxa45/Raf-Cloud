@@ -10,5 +10,6 @@ import raf.rs.cloud.model.User;
 public interface UserDao extends JpaRepository<User,Long> {
 
    User getById(long id);
+   User getUserByUsernameAndPassword(String username , String pass);
 
 }
